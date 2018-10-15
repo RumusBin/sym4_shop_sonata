@@ -10,6 +10,7 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -32,14 +33,23 @@ class ProductAdmin extends AbstractAdmin
         ;
     }
 
-    protected function configureDatagridFilters(DatagridMapper $filter)
+    protected function configureDatagridFilters(DatagridMapper $filterMapper)
     {
-        $filter->add('title');
+        $filterMapper
+            ->add('title')
+            ->add('category', null, [], EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'title'
+            ])
+        ;
     }
 
-    protected function configureListFields(ListMapper $list)
+    protected function configureListFields(ListMapper $listMapper)
     {
-        $list->addIdentifier('title');
+        $listMapper
+            ->addIdentifier('title')
+            ->add('category.title')
+        ;
     }
 
     public function toString($object)

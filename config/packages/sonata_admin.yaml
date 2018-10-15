@@ -1,6 +1,13 @@
 sonata_admin:
-    title: 'Sonata Admin'
+    title: 'E-Shop Admin'
     dashboard:
+        groups:
+            app.admin.group.shop:
+                label: Shop
+                label_catalogue: App
+                items:
+                    - app.admin.product
+                    - app.admin.category
         blocks:
             - { type: sonata.admin.block.admin_list, position: left }
 

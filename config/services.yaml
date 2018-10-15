@@ -15,14 +15,14 @@ services:
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
 
-    admin.category:
+    app.admin.category:
         class: App\Admin\CategoryAdmin
         arguments: [~, App\Entity\Category, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Category }
         public: true
 
-    admin.product:
+    app.admin.product:
         class: App\Admin\ProductAdmin
         arguments: [~, App\Entity\Product, ~]
         tags:
