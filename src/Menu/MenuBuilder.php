@@ -21,9 +21,15 @@ class MenuBuilder
 
     public function createMainMenu(RequestStack $requestStack)
     {
-        $menu = $this->factory->createItem('root');
+        $menu = $this->factory->createItem('root', [
+            'childrenAttributes' => [
+                'class' => 'navbar-nav mr-auto'
+            ]
+        ]);
 
-        $menu->addChild('Home', ['route' => 'homepage']);
+        $menu->addChild('Home', ['route' => 'homepage'])
+            ->setAttribute('class', 'nav-item')
+            ->setLinkAttribute('class', 'nav-link');
 
         return $menu;
     }
