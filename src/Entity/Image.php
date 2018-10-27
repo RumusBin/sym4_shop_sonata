@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -11,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class Image
 {
-    const IMAGE_UPLOAD_PATH = '/uploads/images/';
+    const IMAGE_UPLOAD_PATH = '/home/rumus/projects/sym4_shop_sonata/sym4_shop_sonata/public/images';
 
     private $file;
 
@@ -31,6 +32,11 @@ class Image
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updated;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Category", mappedBy="image")
+     */
+    private $categoryImage;
 
     public function getId(): ?int
     {
@@ -92,14 +98,17 @@ class Image
             return;
         }
 
-        $modFilename = md5($this->getFile()->getClientOriginalName());
+        $modFilename = md5(uniqid()).'.'.$this->getFile()->guessExtension();
 
-        // move takes the target directory and target filename as params
-        $this->getFile()->move(
-            self::IMAGE_UPLOAD_PATH,
-            $modFilename
-        );
-
+        try {
+            // move takes the target directory and target filename as params
+            $this->getFile()->move(
+                self::IMAGE_UPLOAD_PATH,
+                $modFilename
+            );
+        } catch (FileException $e) {
+            return $e->getMessage();
+        }
         // set the path property to the filename where you've saved the file
         $this->filename = $modFilename;
 
@@ -119,9 +128,28 @@ class Image
     /**
      * Updates the hash value to force the preUpdate and postUpdate events to fire
      */
-    public function refreshUpdated()
+    public function refreshUpdated(): self
     {
         $this->setUpdated(new \DateTime());
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategoryImage()
+    {
+        return $this->categoryImage;
+    }
+
+    /**
+     * @param Category $categoryImage | null
+     * @return self
+     */
+    public function setCategoryImage($categoryImage = null): self
+    {
+        $this->categoryImage = $categoryImage;
+        return $this;
     }
 
 }

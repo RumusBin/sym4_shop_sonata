@@ -29,6 +29,12 @@ class Category
     private $description;
 
     /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Image", inversedBy="categoryImage", cascade={"persist"})
+     * @ORM\JoinColumn(name="image_id", referencedColumnName="id")
+     */
+    private $image;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="category")
      */
     private $products;
@@ -94,6 +100,25 @@ class Category
                 $product->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Image | null
+     */
+    public function getImage(): ?Image
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param Image $image | null
+     * @return self
+     */
+    public function setImage(?Image $image): self
+    {
+            $this->image = $image;
 
         return $this;
     }
