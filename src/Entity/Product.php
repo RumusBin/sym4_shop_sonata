@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
@@ -25,6 +26,14 @@ class Product
      * @ORM\Column(type="text", nullable=true)
      */
     private $description;
+
+    /**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="slug", type="string", length=128, nullable=false, unique=true)
+     */
+    private $slug;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="products")
@@ -70,5 +79,23 @@ class Product
         $this->category = $category;
 
         return $this;
+    }
+
+    /**
+     * @param $slug
+     * @return $this
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
