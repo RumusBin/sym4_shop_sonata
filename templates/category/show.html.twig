@@ -1,17 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    {#<section class="jumbotron text-center">#}
-        {#<div class="container">#}
-            {#<h1>Hello in {{ category.title }} category</h1>#}
-
-            {#<ul>#}
-                {#{% for products in category.products %}#}
-                    {#<li>{{ product.title }}</li>#}
-                {#{% endfor %}#}
-            {#</ul>#}
-
-        {#</div>#}
-    {#</section>#}
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">Hello in {{ category.title }} category</h1>
+            <p class="lead text-muted">{{ category.description }}</p>
+        </div>
+    </section>
     <div class="album py-5 bg-light">
         <div class="container">
             <div class="row">
@@ -37,8 +31,8 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="navigation">
-            {{ knp_pagination_render(products) }}
-        </div>
+            <div class="navigation">
+                {{ knp_pagination_render(products) }}
+            </div>
     </div>
 {% endblock %}
