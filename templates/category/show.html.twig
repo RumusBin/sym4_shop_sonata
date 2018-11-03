@@ -15,14 +15,14 @@
     <div class="album py-5 bg-light">
         <div class="container">
             <div class="row">
-                {% for products in category.products %}
+                {% for product in products %}
                     <div class="col-md-4">
                         <div class="card mb-4 box-shadow">
-                            {% if product.image %}
-                                <img src="/images/{{ asset(product.image.filename) }}" alt="{{ product.title }}">
-                            {% else %}
+                            {#{% if product.image %}#}
+                                {#<img src="/images/{{ asset(product.image.filename) }}" alt="{{ product.title }}">#}
+                            {#{% else %}#}
                                 <img src="/images/no-photo.jpg" alt="">
-                            {% endif %}
+                            {#{% endif %}#}
                             <div class="card-body">
                                 <p class="card-text">{{ product.title }}</p>
                                 <div class="d-flex justify-content-between align-items-center">
@@ -36,6 +36,9 @@
                     </div>
                 {% endfor %}
             </div>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(products) }}
         </div>
     </div>
 {% endblock %}
