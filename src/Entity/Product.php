@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -39,6 +41,19 @@ class Product
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="products")
      */
     private $category;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="product", cascade={"persist"}, orphanRemoval=true)
+     */
+    private $images;
+
+    /**
+     * Product constructor.
+     */
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -98,4 +113,48 @@ class Product
     {
         return $this->slug;
     }
+
+    /**
+     * @return Collection | null
+     */
+    public function getImages(): ?Collection
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param  Image $image|null
+     * @return void
+     */
+    public function addImage(?Image $image)
+    {
+        $image->setProduct($this);
+
+        $this->images->add($image);
+    }
+
+    /**
+     * @param Collection $images| null
+     * @return self
+     */
+    public function setImages(?Collection $images): self
+    {
+        if (count($images) > 0) {
+            foreach ($images as $image) {
+                $this->addImage($image);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * return true if exist or false if don't
+     * @param Image $image
+     */
+    public function removeImage($image)
+    {
+        $this->images->removeElement($image);
+    }
+
 }

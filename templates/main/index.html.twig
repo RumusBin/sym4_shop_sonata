@@ -24,7 +24,7 @@
                     <div class="card mb-4 box-shadow">
                         <a href="{{ path('category_show', {'slug': category.slug}) }}">
                         {% if category.image %}
-                        <img src="/images/{{ asset(category.image.filename) }}" alt="{{ category.title }}">
+                        <img src="/images/{{ asset(category.image.getUrl()) }}" alt="{{ category.title }}">
                             {% else %}
                                 <img src="/images/no-photo.jpg" alt="">
                         {% endif %}

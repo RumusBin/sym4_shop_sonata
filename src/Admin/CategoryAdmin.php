@@ -41,11 +41,4 @@ class CategoryAdmin extends AbstractAdmin
             : 'Category';
     }
 
-    public function preUpdate($category)
-    {
-        if ( $image = $category->getImage()) {
-            $image->refreshUpdated();
-        }
-    }
-
 }

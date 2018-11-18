@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class Image
 {
-    const IMAGE_UPLOAD_PATH = '/home/rumus/projects/sym4_shop_sonata/sym4_shop_sonata/public/images';
 
     private $file;
 
@@ -28,17 +27,31 @@ class Image
      */
     private $filename;
 
+    // Temporary store the file name
+    private $tempFilename;
+
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @var string
+     *
+     * @ORM\Column(name="extension", type="string", length=255)
      */
-    private $updated;
+    private $extension;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Category", mappedBy="image")
      */
     private $categoryImage;
 
-    public function getId(): ?int
+    /**
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="images", cascade={"persist"})
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     */
+    private $product;
+
+    /**
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }
@@ -55,21 +68,20 @@ class Image
         return $this;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    /**
+     * @return string
+     */
+    public function getExtension(): string
     {
-        return $this->updated;
+        return $this->extension;
     }
 
-    public function setUpdated(?\DateTimeInterface $updated): self
+    /**
+     * @param string $extension
+     */
+    public function setExtension(string $extension): void
     {
-        $this->updated = $updated;
-
-        return $this;
-    }
-
-    public function getUploadDir()
-    {
-        return self::IMAGE_UPLOAD_PATH;
+        $this->extension = $extension;
     }
 
     /**
@@ -80,6 +92,16 @@ class Image
     public function setFile(UploadedFile $file = null)
     {
         $this->file = $file;
+
+        if (null !== $this->extension)
+        {
+            // Save file extension so we can remove it later
+            $this->tempFilename = $this->extension;
+
+            // Reset values
+            $this->extension = null;
+            $this->name = null;
+        }
     }
 
     /**
@@ -92,52 +114,10 @@ class Image
         return $this->file;
     }
 
-    public function upload()
-    {
-        if (null === $this->getFile()) {
-            return;
-        }
-
-        $modFilename = md5(uniqid()).'.'.$this->getFile()->guessExtension();
-
-        try {
-            // move takes the target directory and target filename as params
-            $this->getFile()->move(
-                self::IMAGE_UPLOAD_PATH,
-                $modFilename
-            );
-        } catch (FileException $e) {
-            return $e->getMessage();
-        }
-        // set the path property to the filename where you've saved the file
-        $this->filename = $modFilename;
-
-        // clean up the file property as you won't need it anymore
-        $this->setFile(null);
-    }
-
     /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
+     * @return Category | null
      */
-    public function lifecycleFileUpload()
-    {
-        $this->upload();
-    }
-
-    /**
-     * Updates the hash value to force the preUpdate and postUpdate events to fire
-     */
-    public function refreshUpdated(): self
-    {
-        $this->setUpdated(new \DateTime());
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCategoryImage()
+    public function getCategoryImage(): ?Category
     {
         return $this->categoryImage;
     }
@@ -150,6 +130,109 @@ class Image
     {
         $this->categoryImage = $categoryImage;
         return $this;
+    }
+
+    /**
+     * @param Product $product | null
+     * @return self
+     */
+    public function setProduct(?Product $product = null)
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload()
+    {
+        // If no file is set, do nothing
+        if (null === $this->file)
+        {
+            return;
+        }
+
+        // The file name is the entity's ID
+        // We also need to store the file extension
+        $this->extension = $this->file->guessExtension();
+
+        // And we keep the original name
+        $this->filename = $this->file->getClientOriginalName();
+    }
+
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        if (null === $this->getFile()) {
+            return;
+        }
+
+        // A file is present, remove it
+        if (null !== $this->tempFilename)
+        {
+            $oldFile = $this->getUploadRootDir().'/'.$this->id.'.'.$this->tempFilename;
+            if (file_exists($oldFile))
+            {
+                unlink($oldFile);
+            }
+        }
+
+        // Move the file to the upload folder
+        $this->file->move(
+            $this->getUploadRootDir(),
+            $this->id.'.'.$this->extension
+        );
+
+    }
+
+    /**
+     * @ORM\PreRemove()
+     */
+    public function preRemoveUpload()
+    {
+        // Save the name of the file we would want to remove
+        $this->tempFilename = $this->getUploadRootDir().'/'.$this->id.'.'.$this->extension;
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        // PostRemove => We no longer have the entity's ID => Use the name we saved
+        if (file_exists($this->tempFilename))
+        {
+            // Remove file
+            unlink($this->tempFilename);
+        }
+    }
+
+    public function getUploadDir()
+    {
+        return 'images/';
+    }
+
+    private function getUploadRootDir()
+    {
+        return __DIR__.'/../../public/' . $this->getUploadDir();
+    }
+
+    public function getUrl()
+    {
+        return $this->id.'.'.$this->extension;
     }
 
 }
