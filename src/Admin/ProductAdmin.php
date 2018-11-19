@@ -5,7 +5,6 @@ namespace App\Admin;
 
 use App\Entity\Category;
 use App\Entity\Product;
-use function dump;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -29,7 +28,7 @@ class ProductAdmin extends AbstractAdmin
                     'by_reference' => false
                 ], [
                     'edit' => 'inline',
-                    'inline' => 'table',
+                    'inline' => 'normal',
                     'sortable' => 'id',
                     'limit' => 7
                 ])
@@ -83,6 +82,7 @@ class ProductAdmin extends AbstractAdmin
 
     public function preRemove($product)
     {
+        /** @var Product $product */
         if ($images = $product->getImages()) {
             foreach ($images as $image) {
                 $product->removeImage($image);

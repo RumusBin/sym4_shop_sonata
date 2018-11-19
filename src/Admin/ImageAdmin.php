@@ -13,35 +13,11 @@ class ImageAdmin extends AbstractAdmin
 {
     protected function configureFormFields(FormMapper $formMapper)
     {
-
-        if($this->hasParentFieldDescription()) {
-
-            $getter = 'get' . $this->getParentFieldDescription()->getFieldName();
-
-            // get hold of the parent object
-            $parent = $this->getParentFieldDescription()->getAdmin()->getSubject();
-            if ($parent) {
-                $image = $parent->$getter();
-            } else {
-                $image = null;
-            }
-        } else {
-            $image = $this->getSubject();
-        }
-
-        // use $fileFieldOptions so we can add other options to the field
         $fileFieldOptions = ['required' => false];
-        if ($image && !$image instanceof ArrayCollection && !$image instanceof PersistentCollection) {
-            if ($webPath = $image->getUrl()) {
-                // add a 'help' option containing the preview's img tag
-                $fileFieldOptions['help'] = '<img src="'.$webPath.'" class="admin-preview" />';
-            } else {
-                foreach ($image as $i) {
-                    $fileFieldOptions['help'][] = '<img src="'.$i->getUrl().'" class="admin-preview" />';
-                }
-            }
-
-        }
+            $fileFieldOptions['help'] = '<div class="image-inner">';
+                $fileFieldOptions['help'] .= '<img id = image_'. $this->getSubject()->getId()
+                    . ' src="' . $this->getSubject()->getUrl() . '" class="admin-preview" />';
+                $fileFieldOptions['help'] .= '</div>';
 
         $formMapper
             ->add('file', FileType::class, $fileFieldOptions)

@@ -11,6 +11,8 @@ sonata_admin:
                     - app.admin.category
         blocks:
             - { type: sonata.admin.block.admin_list, position: left }
+    templates:
+        edit: admin/custom_edit.html.twig
 
 sonata_block:
     blocks:
