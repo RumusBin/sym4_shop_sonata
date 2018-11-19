@@ -5,6 +5,7 @@
 /public/images/
 /var/
 /vendor/
+/public/images/
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###

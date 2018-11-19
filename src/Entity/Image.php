@@ -38,12 +38,12 @@ class Image
     private $extension;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Category", mappedBy="image")
+     * @ORM\OneToOne(targetEntity="App\Entity\Category", mappedBy="image", cascade={"all"})
      */
     private $categoryImage;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="images", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="images", cascade={"all"})
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
      */
     private $product;
@@ -232,7 +232,7 @@ class Image
 
     public function getUrl()
     {
-        return $this->id.'.'.$this->extension;
+        return '/images/' . $this->id.'.'.$this->extension;
     }
 
 }

@@ -43,7 +43,7 @@ class Product
     private $category;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="product", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="product", cascade={"all"}, orphanRemoval=true)
      */
     private $images;
 
