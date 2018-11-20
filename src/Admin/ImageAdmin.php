@@ -14,11 +14,11 @@ class ImageAdmin extends AbstractAdmin
     {
         $fileFieldOptions = ['required' => false];
         if ( $this->getSubject() && $imgId = $this->getSubject()->getId()) {
-            $fileFieldOptions['help'] = '<div class="image-inner">';
-            $fileFieldOptions['help'] .= '<img id = image_'. $imgId
+            $fileFieldOptions['help'] = '<img id = image_'. $imgId
                 . ' src="' . $this->getSubject()->getUrl() . '" class="admin-preview" />';
-            $fileFieldOptions['help'] .= '</div>';
 
+        } else {
+            $fileFieldOptions['help'] = '<img src="/images/no-photo.jpg" class="admin-preview" />';
         }
 
 
