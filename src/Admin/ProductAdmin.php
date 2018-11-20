@@ -18,6 +18,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 class ProductAdmin extends AbstractAdmin
 {
 
+    protected $baseRoutePattern = 'product';
+
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper

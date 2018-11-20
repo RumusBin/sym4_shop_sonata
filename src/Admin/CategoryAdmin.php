@@ -12,6 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class CategoryAdmin extends AbstractAdmin
 {
+
+    protected $baseRoutePattern = 'category';
+
     protected function configureFormFields(FormMapper $formMapper)
     {
        $formMapper
