@@ -3,6 +3,7 @@
 namespace App\Admin;
 
 use App\Entity\Category;
+use const null;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -42,6 +43,13 @@ class CategoryAdmin extends AbstractAdmin
         return $object instanceof Category
             ? $object->getTitle()
             : 'Category';
+    }
+
+    public function prePersist($category)
+    {
+        if (!$category->getImage()->getFilename()) {
+            $category->setImage(null);
+        }
     }
 
 }

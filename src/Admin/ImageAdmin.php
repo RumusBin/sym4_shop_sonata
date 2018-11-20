@@ -13,10 +13,14 @@ class ImageAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $fileFieldOptions = ['required' => false];
+        if ( $this->getSubject() && $imgId = $this->getSubject()->getId()) {
             $fileFieldOptions['help'] = '<div class="image-inner">';
-                $fileFieldOptions['help'] .= '<img id = image_'. $this->getSubject()->getId()
-                    . ' src="' . $this->getSubject()->getUrl() . '" class="admin-preview" />';
-                $fileFieldOptions['help'] .= '</div>';
+            $fileFieldOptions['help'] .= '<img id = image_'. $imgId
+                . ' src="' . $this->getSubject()->getUrl() . '" class="admin-preview" />';
+            $fileFieldOptions['help'] .= '</div>';
+
+        }
+
 
         $formMapper
             ->add('file', FileType::class, $fileFieldOptions)
